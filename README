@@ -1,23 +1,45 @@
-# How to run the code
+# Banker's Algorithm Implementation
 
-1. Install the required packages
+## Overview
+A web-based implementation of Deadlock Avoidance using the Banker's Algorithm.
 
+## Prerequisites
+- Python 3.7 or higher
+- pip (Python package manager)
+
+## Installation
+
+1. Install the required dependencies:
 ```bash
 pip install pandas numpy flask
 ```
 
-2. Run the code
+## Usage
 
+1. Start the application:
 ```bash
 python app.py
 ```
 
-3. Open the browser and go to http://127.0.0.1:5000/
+2. Access the web interface:
+   - Open your browser
+   - Navigate to `http://127.0.0.1:5000`
 
-4. Enter the number of processes and resources
+3. Using the Application:
+   - Input the number of processes and resources
+   - Enter the current allocation matrix
+   - Enter the maximum request matrix
+   - Specify available resources
+   - Click "Check Safety" to analyze the system state
 
-5. Enter the allocation, request, and available resources
+## Output
+The application will display:
+- Whether the system is in a safe state
+- The safe sequence (if one exists)
+- Detailed execution steps
 
-6. Click on the "Check Safety" button to check if the system is safe
+## License
+[Your License Here]
 
-7. The result will be displayed on the screen
+## Contributing
+[Optional: Add contribution guidelines]
