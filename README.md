@@ -38,8 +38,4 @@ The application will display:
 - The safe sequence (if one exists)
 - Detailed execution steps
 
-## License
-[Your License Here]
 
-## Contributing
-[Optional: Add contribution guidelines]
