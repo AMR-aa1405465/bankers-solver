@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banker's Algorithm Solver</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center">Banker's Algorithm Solver</h1>
+        <form id="bankers-form">
+            <div class="mb-3">
+                <label for="all-res" class="form-label">Total Resources (comma-separated):</label>
+                <input type="text" class="form-control" id="all-res" placeholder="e.g., 10,5,7">
+            </div>
+            <div class="mb-3">
+                <label for="allocation" class="form-label">Allocation Table (comma-separated rows):</label>
+                <textarea class="form-control" id="allocation" rows="3" placeholder="e.g., 0,1,0\n2,0,0\n3,0,2"></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="needed" class="form-label">Needed Table (comma-separated rows):</label>
+                <textarea class="form-control" id="needed" rows="3" placeholder="e.g., 7,4,3\n1,2,2\n6,0,0"></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="request" class="form-label">Request Vector (comma-separated):</label>
+                <input type="text" class="form-control" id="request" placeholder="e.g., 1,0,2">
+            </div>
+            <div class="mb-3">
+                <label for="process-requesting" class="form-label">Process Requesting (index):</label>
+                <input type="number" class="form-control" id="process-requesting" placeholder="e.g., 1">
+            </div>
+            <button type="submit" class="btn btn-primary">Solve</button>
+        </form>
+        <div class="mt-4" id="result"></div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#bankers-form').on('submit', function(e) {
+                e.preventDefault();
+
+                // Validate inputs before sending
+                if (!$('#all-res').val() || !$('#allocation').val() || !$('#needed').val() || 
+                    !$('#request').val() || !$('#process-requesting').val()) {
+                    $('#result').html(
+                        `<div class="alert alert-danger">Please fill in all fields</div>`
+                    );
+                    return;
+                }
+
+                const allRes = $('#all-res').val().split(',').map(Number);
+                const allocation = $('#allocation').val().trim().split('\n').map(row => row.split(',').map(Number));
+                const needed = $('#needed').val().trim().split('\n').map(row => row.split(',').map(Number));
+                const request = $('#request').val().split(',').map(Number);
+                const processRequesting = parseInt($('#process-requesting').val(), 10);
+
+                $.ajax({
+                    url: '/solve',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        all_res: allRes,
+                        allocation: allocation,
+                        needed: needed,
+                        request: request,
+                        process_requesting: processRequesting
+                    }),
+                    success: function(response) {
+                        if (response && typeof response.result !== 'undefined') {
+                            $('#result').html(
+                                `<div class="alert alert-${response.result ? 'success' : 'danger'}">
+                                    ${response.message || 'Operation completed'}
+                                </div>`
+                            );
+                        } else {
+                            $('#result').html(
+                                `<div class="alert alert-danger">Invalid response from server</div>`
+                            );
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        let errorMessage = 'An error occurred';
+                        if (xhr.responseJSON && xhr.responseJSON.error) {
+                            errorMessage = xhr.responseJSON.error;
+                        }
+                        $('#result').html(
+                            `<div class="alert alert-danger">Error: ${errorMessage}</div>`
+                        );
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
