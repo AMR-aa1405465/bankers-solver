@@ -1,97 +1,337 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Banker's Algorithm Solver</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css">
+    <title>Banker's Algorithm</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+
+        h3 {
+            color: #34495e;
+            margin-top: 25px;
+        }
+
+        table {
+            margin: 15px 0;
+            border-collapse: collapse;
+            width: 100%;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.05);
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #3498db;
+            color: white;
+            font-weight: 500;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        input[type="number"] {
+            width: 60px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        select {
+            padding: 8px 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: white;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+
+        button {
+            background-color: #2ecc71;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #27ae60;
+        }
+
+        .table-container {
+            margin-top: 30px;
+        }
+
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            background-color: #f8f9fa;
+            border-left: 4px solid #3498db;
+        }
+
+        #requestContainer {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+
+        #processId {
+            width: 80px;
+            margin-left: 10px;
+            margin-right: 20px;
+        }
+
+        label {
+            color: #2c3e50;
+            font-weight: 500;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            input[type="number"] {
+                width: 50px;
+                padding: 6px;
+            }
+            
+            th, td {
+                padding: 8px;
+            }
+        }
+
+        .controls-container {
+            background-color: #fff5f5;
+            border: 2px solid #fc8181;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 30px;
+            box-shadow: 0 2px 4px rgba(252, 129, 129, 0.2);
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .control-group label {
+            color: #e53e3e;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .control-group select {
+            padding: 8px 15px;
+            border: 1px solid #fc8181;
+            border-radius: 4px;
+            background-color: white;
+            color: #2d3748;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .control-group select:hover {
+            border-color: #e53e3e;
+        }
+
+        .control-group select:focus {
+            outline: none;
+            border-color: #e53e3e;
+            box-shadow: 0 0 0 3px rgba(229, 62, 62, 0.1);
+        }
+    </style>
 </head>
 <body>
-    <div class="container mt-5">
-        <h1 class="text-center">Banker's Algorithm Solver</h1>
-        <form id="bankers-form">
-            <div class="mb-3">
-                <label for="all-res" class="form-label">Total Resources (comma-separated):</label>
-                <input type="text" class="form-control" id="all-res" placeholder="e.g., 10,5,7">
+    <div class="container">
+        <h2>Banker's Algorithm Test1, Test2 and Test3</h2>
+        
+        <div class="controls-container">
+            <div class="control-group">
+                <label for="resourceCount">Number of Resource Types:</label>
+                <select id="resourceCount" onchange="generateTables()">
+                    <option value="1">1 (A)</option>
+                    <option value="2">2 (A,B)</option>
+                    <option value="3">3 (A,B,C)</option>
+                    <option value="4">4 (A,B,C,D)</option>
+                    <option value="5">5 (A,B,C,D,E)</option>
+                </select>
             </div>
-            <div class="mb-3">
-                <label for="allocation" class="form-label">Allocation Table (comma-separated rows):</label>
-                <textarea class="form-control" id="allocation" rows="3" placeholder="e.g., 0,1,0\n2,0,0\n3,0,2"></textarea>
+
+            <div class="control-group">
+                <label for="processCount">Number of Processes:</label>
+                <select id="processCount" onchange="generateTables()">
+                    <option value="2">2 Processes</option>
+                    <option value="3">3 Processes</option>
+                    <option value="4">4 Processes</option>
+                    <option value="5" selected>5 Processes</option>
+                    <option value="6">6 Processes</option>
+                </select>
             </div>
-            <div class="mb-3">
-                <label for="needed" class="form-label">Needed Table (comma-separated rows):</label>
-                <textarea class="form-control" id="needed" rows="3" placeholder="e.g., 7,4,3\n1,2,2\n6,0,0"></textarea>
+        </div>
+
+        <div class="table-container">
+            <h3>Total Resources</h3>
+            <table id="totalResources"></table>
+
+            <h3>Allocation Matrix</h3>
+            <table id="allocation"></table>
+
+            <h3>Need Matrix</h3>
+            <table id="needed"></table>
+
+            <h3>Request</h3>
+            <div id="requestContainer">
+                <label for="processId">Requesting Process ID:</label>
+                <input type="number" id="processId" min="0" required>
+                <table id="request"></table>
             </div>
-            <div class="mb-3">
-                <label for="request" class="form-label">Request Vector (comma-separated):</label>
-                <input type="text" class="form-control" id="request" placeholder="e.g., 1,0,2">
-            </div>
-            <div class="mb-3">
-                <label for="process-requesting" class="form-label">Process Requesting (index):</label>
-                <input type="number" class="form-control" id="process-requesting" placeholder="e.g., 1">
-            </div>
-            <button type="submit" class="btn btn-primary">Solve</button>
-        </form>
-        <div class="mt-4" id="result"></div>
+
+            <button onclick="calculateBankers()">Calculate</button>
+        </div>
+
+        <div id="result"></div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script>
-        $(document).ready(function() {
-            $('#bankers-form').on('submit', function(e) {
-                e.preventDefault();
-
-                // Validate inputs before sending
-                if (!$('#all-res').val() || !$('#allocation').val() || !$('#needed').val() || 
-                    !$('#request').val() || !$('#process-requesting').val()) {
-                    $('#result').html(
-                        `<div class="alert alert-danger">Please fill in all fields</div>`
-                    );
-                    return;
-                }
-
-                const allRes = $('#all-res').val().split(',').map(Number);
-                const allocation = $('#allocation').val().trim().split('\n').map(row => row.split(',').map(Number));
-                const needed = $('#needed').val().trim().split('\n').map(row => row.split(',').map(Number));
-                const request = $('#request').val().split(',').map(Number);
-                const processRequesting = parseInt($('#process-requesting').val(), 10);
-
-                $.ajax({
-                    url: '/solve',
-                    method: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify({
-                        all_res: allRes,
-                        allocation: allocation,
-                        needed: needed,
-                        request: request,
-                        process_requesting: processRequesting
-                    }),
-                    success: function(response) {
-                        if (response && typeof response.result !== 'undefined') {
-                            $('#result').html(
-                                `<div class="alert alert-${response.result ? 'success' : 'danger'}">
-                                    ${response.message || 'Operation completed'}
-                                </div>`
-                            );
-                        } else {
-                            $('#result').html(
-                                `<div class="alert alert-danger">Invalid response from server</div>`
-                            );
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        let errorMessage = 'An error occurred';
-                        if (xhr.responseJSON && xhr.responseJSON.error) {
-                            errorMessage = xhr.responseJSON.error;
-                        }
-                        $('#result').html(
-                            `<div class="alert alert-danger">Error: ${errorMessage}</div>`
-                        );
-                    }
-                });
+        function generateTables() {
+            const resourceCount = parseInt(document.getElementById('resourceCount').value);
+            const processCount = parseInt(document.getElementById('processCount').value);
+            const headers = Array.from({length: resourceCount}, (_, i) => String.fromCharCode(65 + i));
+            
+            // Generate Total Resources table
+            let totalHtml = '<tr>';
+            headers.forEach(header => {
+                totalHtml += `<th>${header}</th>`;
             });
-        });
+            totalHtml += '</tr><tr>';
+            headers.forEach(() => {
+                totalHtml += '<td><input type="number" min="0" required></td>';
+            });
+            totalHtml += '</tr>';
+            document.getElementById('totalResources').innerHTML = totalHtml;
+
+            // Generate Allocation and Need tables
+            ['allocation', 'needed'].forEach(tableId => {
+                let html = '<tr><th>Process</th>';
+                headers.forEach(header => {
+                    html += `<th>${header}</th>`;
+                });
+                html += '</tr>';
+
+                // Add the specified number of processes
+                for(let i = 0; i < processCount; i++) {
+                    html += `<tr><td>P${i}</td>`;
+                    headers.forEach(() => {
+                        html += '<td><input type="number" min="0" required></td>';
+                    });
+                    html += '</tr>';
+                }
+                document.getElementById(tableId).innerHTML = html;
+            });
+
+            // Generate Request table
+            let requestHtml = '<tr>';
+            headers.forEach(header => {
+                requestHtml += `<th>${header}</th>`;
+            });
+            requestHtml += '</tr><tr>';
+            headers.forEach(() => {
+                requestHtml += '<td><input type="number" min="0" required></td>';
+            });
+            requestHtml += '</tr>';
+            document.getElementById('request').innerHTML = requestHtml;
+
+            // Update the max value for processId input
+            document.getElementById('processId').max = processCount - 1;
+        }
+
+        function getTableData(tableId) {
+            const table = document.getElementById(tableId);
+            const rows = table.getElementsByTagName('tr');
+            const data = [];
+            
+            // Skip header row for allocation and needed tables
+            const startRow = (tableId === 'totalResources' || tableId === 'request') ? 1 : 1;
+            
+            for(let i = startRow; i < rows.length; i++) {
+                const inputs = rows[i].getElementsByTagName('input');
+                const rowData = Array.from(inputs).map(input => parseInt(input.value) || 0);
+                if(tableId === 'totalResources' || tableId === 'request') {
+                    return rowData;
+                }
+                data.push(rowData);
+            }
+            return data;
+        }
+
+        function calculateBankers() {
+            const data = {
+                all_res: getTableData('totalResources'),
+                allocation: getTableData('allocation'),
+                needed: getTableData('needed'),
+                request: getTableData('request'),
+                process_requesting: parseInt(document.getElementById('processId').value)
+            };
+
+            fetch('/solve', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('result').innerHTML = data.message;
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                document.getElementById('result').innerHTML = 'Error occurred while calculating';
+            });
+        }
+
+        // Generate tables on page load
+        window.onload = generateTables;
     </script>
 </body>
 </html>
