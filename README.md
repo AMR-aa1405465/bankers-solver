@@ -37,5 +37,3 @@ The application will display:
 - Whether the system is in a safe state
 - The safe sequence (if one exists)
 - Detailed execution steps
-
-

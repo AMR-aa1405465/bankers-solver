@@ -27,6 +27,7 @@ class BankersAlgorithm:
         work = self.available.copy()
         finish = [False] * len(self.needed)
         safe_sequence = []
+        execution_states = []  # To store the state after each execution
 
         while True:
             found = False
@@ -34,6 +35,7 @@ class BankersAlgorithm:
                 if not finish[i] and all(self.needed[i] <= work):
                     work += self.allocation[i]
                     safe_sequence.append(i)
+                    execution_states.append(work.copy())  # Store the new available resources
                     finish[i] = True
                     found = True
 
@@ -41,9 +43,13 @@ class BankersAlgorithm:
                 break
 
         if all(finish):
-            return True, safe_sequence
+            # Create a message showing the available resources after each process
+            execution_message = "Process execution sequence:<br>"
+            for idx, process in enumerate(safe_sequence):
+                execution_message += f"After executing P{process}: Available = {execution_states[idx]}<br>"
+            return True, execution_message
         else:
-            return False, []
+            return False, "No safe sequence found"
 
     def process_request(self):
         valid, message = self.is_request_valid()
@@ -58,7 +64,7 @@ class BankersAlgorithm:
         safe, sequence = self.check_safety()
 
         if safe:
-            return True, f"System is in a safe state. Safe sequence: {sequence}"
+            return True, sequence  # Now returns the detailed execution message
         else:
             # Rollback allocation
             self.available += self.request
